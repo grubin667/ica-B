@@ -1,0 +1,41 @@
+<html>
+  <body>
+    <h1>Order Confirmation</h1>
+    <p>Hello {{customer.name}},</p>
+    <p>Thank you for your order! Your order number is {{order.number}}.</p>
+    <p>Your order details are:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each order.items}}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{quantity}}</td>
+          <td>${{price}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <p>Shipping to:</p>
+    <address>
+      {{#with customer.address}}
+        {{#if company}}
+          {{company}}<br>
+        {{/if}}
+        {{firstName}} {{lastName}}<br>
+        {{street}}<br>
+        {{city}}, {{state}} {{zip}}<br>
+        {{country}}
+      {{/with}}
+    </address>
+    <p>Your order will be shipped {{#unless order.isRush}}within 3-5 business days{{else}}within 24 hours{{/unless}}.</p>
+    <p>Total: ${{order.total}}</p>
+    <p>Thank you for shopping with us!</p>
+  </body>
+</html>

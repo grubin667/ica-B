@@ -1,0 +1,7 @@
+.env
+node_modules
+.cmdrc*
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

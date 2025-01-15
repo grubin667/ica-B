@@ -1,0 +1,7 @@
+packages:
+  # include packages in subfolders (change as required)
+  - 'app/**'
+  - 'breejob/**'
+  - 'filewatcherlocal/**'
+  # exclude packages that are inside test directories
+  - '!**/test/**'

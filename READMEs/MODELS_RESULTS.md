@@ -1,0 +1,3 @@
+## Modals and Results
+#### Every time an agency is linked to an org, a record is created in the AgenciesOnOrgs junction table. In addition to the flag isInternalAgency which has existed from the start, the combined org/agency pair is linked to a scoring model in the Model table with its key added to AgenciesOnOrgs.
+#### There is one and only one active model assigned to an org/agency pair at any point in time. It is this model that is used to process voice files into transcriptions and produce scoring results until a new or revised model is created and is made or becomes active. Models could be edited if they'd never been used, but once a model has been used even once, it is supplanted by a new model and is deactivated.

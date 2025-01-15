@@ -1,0 +1,82 @@
+{
+  "name": "ica-final",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS='--trace-warnings' next dev",
+    "debug": "cross-env NODE_OPTIONS='--inspect' next dev",
+    "build": "next build",
+    "start": "next start",
+    "prebuild": "prisma generate",
+    "predev": "prisma generate",
+    "prisma:reset": "prisma migrate reset",
+    "prisma:migrate": "prisma migrate deploy",
+    "pmigrate": "zx ./migrate.mjs",
+    "prisma:generate": "prisma generate",
+    "preinstall": "npx only-allow pnpm",
+    "lint": "next lint"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.717.0",
+    "@aws-sdk/s3-request-presigner": "^3.717.0",
+    "@next-auth/prisma-adapter": "^1.0.7",
+    "@prisma/client": "^5.22.0",
+    "@types/node": "^20.17.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "ag-grid-community": "~31.3.4",
+    "ag-grid-enterprise": "~31.3.4",
+    "ag-grid-react": "~31.3.4",
+    "autoprefixer": "^10.4.20",
+    "browser-fs-access": "^0.35.0",
+    "csv-parse": "^5.6.0",
+    "csv-stringify": "^6.5.2",
+    "date-fns": "^3.6.0",
+    "eslint-config-next": "^13.5.8",
+    "flowbite": "^1.8.1",
+    "flowbite-react": "^0.6.4",
+    "mime": "^4.0.6",
+    "next": "14.2.15",
+    "next-auth": "^4.24.11",
+    "node": "^20.18.1",
+    "nodemailer": "^6.9.16",
+    "postcss": "^8.4.49",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-filepond": "^7.1.3",
+    "react-icons": "^4.12.0",
+    "react-markdown": "^9.0.1",
+    "react-phone-number-input": "^3.4.10",
+    "react-toastify": "^10.0.6",
+    "remark-gfm": "^4.0.0",
+    "swr": "^2.3.0",
+    "tailwindcss": "^3.4.17",
+    "use-deep-compare-effect": "^1.8.1",
+    "ws": "^8.18.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@tailwindcss/forms": "^0.5.9",
+    "@tailwindcss/typography": "^0.5.15",
+    "@types/eslint__js": "^8.42.3",
+    "cross-env": "^7.0.3",
+    "prisma": "^5.22.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.0",
+    "zx": "^7.2.3"
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
+  },
+  "packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b",
+  "optionalDependencies": {
+    "bufferutil": "^4.0.9"
+  }
+}

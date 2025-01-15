@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.nunito_sans {
+  font-family: var(--font-nunito_sans);
+}
+.poppins {
+  font-family: var(--font-poppins);
+}
+.rubik_doodle_shadow {
+  font-family: var(--font-rubik_doodle_shadow);
+}
+.londrina_outline {
+  font-family: var(--font-londrina_outline);
+}
+.galindo {
+  font-family: var(--font-galindo);
+}
+.bungee_spice {
+  font-family: var(--font-bungee_spice);
+}
+.bungee {
+  font-family: var(--font-bungee);
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* CSS for free-form */
+.grid-wrapper > div {
+  padding: 0.6rem;
+	display: flex;
+  border: 1px solid #000000;
+  border-radius: 10px;
+}
+.grid-wrapper {
+	display: grid;
+	grid-gap: 10px;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	grid-auto-rows: 200px;
+	grid-auto-flow: dense;
+}
+.grid-wrapper .wide {
+	grid-column: span 2;
+}
+.grid-wrapper .tall {
+	grid-row: span 2;
+}
+.grid-wrapper .big {
+	grid-column: span 2;
+	grid-row: span 2;
+}
+
+/* CSS for fixed-header tables */
+.fixed_header {
+  /*width: 400px;*/
+  table-layout: auto;
+  width: 100%;
+  border-collapse: collapse;
+}
+.fixed_header caption {
+  background: lightgray;
+  font-weight: 700;
+}
+.fixed_header tbody {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  height: 20vh;
+}
+.fixed_header thead tr {
+  display: block;
+}
+.fixed_header thead {
+  background: black;
+  color: #fff;
+}
+.fixed_header th {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  text-align: left;
+  /* width: 200px; */
+}
+.fixed_header td {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 1rem;
+  /* padding-bottom: 1rem; */
+  text-align: left;
+  /* width: 200px; */
+}
+
+.full-width-panel {
+  /* undo the white-space setting Fresh puts in */
+  white-space: normal;
+  height: 100%;
+  width: 100%;
+  border: 2px solid grey;
+  border-style: ridge;
+  box-sizing: border-box;
+  padding: 5px;
+  background-color: #99999944;
+}
+
+.full-width-flag {
+  float: left;
+  padding: 6px;
+}
+
+.full-width-summary {
+  float: left;
+  margin-right: 10px;
+}
+
+.full-width-panel label {
+  padding-top: 3px;
+  display: inline-block;
+  font-size: 12px;
+}
+
+.full-width-center {
+  overflow-y: scroll;
+  border: 1px solid grey;
+  padding: 2px;
+  height: 100%;
+  width: 40%;
+  box-sizing: border-box;
+  font-family: cursive;
+  background-color: #99999944;
+}
+
+.full-width-center p {
+  margin-top: 0px;
+}
+.full-width-title {
+  font-size: 20px;
+}
+
+.example-full-width-row {
+  background-color: #33CC3344;
+  border: 2px solid #35af35;
+  /* we want the border to be kept within the row height */
+  box-sizing: border-box;
+  /* get the row to fill the available height */
+  height: 100%;
+  /* grid sets white-space to one line, need to reset for wrapping the text */
+  white-space: normal;
+}
+
+input:invalid + span::after {
+  content: "✖";
+  padding-left: 5px;
+}
+
+input:valid + span::after {
+  content: "✓";
+  padding-left: 5px;
+}

@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "Node",
+    "noEmit": true,
+    "noImplicitAny": false,
+    "paths": {
+      "react": [ "node_modules/@types/react" ],
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es5",
+    "typeRoots": ["./app/types"]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/**/route.js", "prisma/seed.js", "app/components/audioplayer.jsx", "app/components/modals/explore-scoring.jsx", "app/components/resultsfiltering.jsx", "app/components/common/validateByRegex.js", "app/components/modals/add-agency.jsx", "app/components/modals/add-org.jsx", "app/components/modals/add-user-agency.jsx", "app/components/modals/add-user-org.jsx", "app/components/modals/edit-agency.jsx", "app/components/modals/edit-models.jsx", "app/components/modals/edit-org.jsx", "app/components/modals/edit-user-agency.jsx", "app/components/modals/edit-user-org.jsx", "app/components/modals/edit-user.jsx", "app/components/modals/explore-scoring-detail.jsx", "app/components/modals/help.jsx", "app/components/modals/profile.jsx", "app/components/modals/results.jsx", "app/components/agencyadmin.jsx", "app/components/agencycommon.jsx", "app/components/agencynonadmin.jsx", "app/components/allchart.jsx", "app/components/allcompscommon.jsx", "app/components/enteremail.jsx", "app/components/headerbtns.jsx", "app/components/home-page.jsx", "app/components/orgadmin.jsx", "app/components/orgcommon.jsx", "app/components/orgnonadmin.jsx", "app/components/superadmin.jsx", "app/components/common/doDragAndDrop2.jsx", "app/components/transcription.jsx", "app/components/common/doDragAndDrop1.jsx"],
+  "exclude": ["node_modules"]
+}

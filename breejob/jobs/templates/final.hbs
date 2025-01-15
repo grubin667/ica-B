@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, td, th {
+  border: 1px solid;
+}
+
+table {
+  width: 60%;
+  border-collapse: collapse;
+}
+</style>
+</head>
+  <body>
+    <h1>Agency Call Report for {{orgName}} for {{formatDate}}</h1>
+    <p>Hello {{admin.firstName}} {{admin.lastName}}:</p>
+    <p>Your agencies uploaded these quantities of recorded calls yesterday
+      (midnight to midnight). All results are available on the site and can be seen by clicking the Link
+      on each row.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Agency</th>
+          <th>Quantity</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each orgAgencies}}
+        <tr>
+          <td>{{agencyName}}</td>
+          <td>{{numResults}}</td>
+          <td>{{link "See Website" url}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <br /><br />
+    <p>You received this email because you are an Admin user at your Org. Emails are sent just
+      after midnight every night, seven nights a week.
+    </p>
+    <p>Please reach out to us if you have any questions.</p>
+    <p>Thank you,</p>
+    <p>The <i>Independent Call Auditors</i> Team</p>
+  </body>
+</html>
