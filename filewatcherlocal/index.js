@@ -1,7 +1,7 @@
 
 import Bree from 'bree';
 import { Graceful } from './getGraceful.cjs';
-import { Cabin } from './getCabin.cjs';
+// import { Cabin } from './getCabin.cjs';
 
 const envtimeout = process.env.TIMEOUT;
 const envinterval = process.env.INTERVAL;

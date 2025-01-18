@@ -12,6 +12,8 @@ import { dirname } from 'path';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                       THE FULL STORY: a fairly deep dive
 //
+// TODO: THE FOLLOWING IS A BIT OBSOLETE. IT NEEDS TO BE EDITED.
+//
 // Agencies use the ICA website to upload call recordings to our server throughout the day. Filewatchlocal watches
 // the directory (structure) where they are accumulated. When one arrives, it is sent to Deepgram for transcription.
 // We then use the scoring model currently in place for the agency and its org. We use it along with our proprietary
@@ -49,6 +51,7 @@ import { dirname } from 'path';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INITIALIZATION.
+
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
   process.exit(1);
@@ -74,9 +77,9 @@ Handlebars.registerHelper("link", function (text, url) {
   return new Handlebars.SafeString("<a href='" + url + "'>" + text + "</a>");
 });
 
-// fetch and precompile our handlebars template, final.hbs
+// Fetch and precompile our handlebars template, final.hbs, creating a templating function that will be
+// used to construct each org admin email we're going to send.
 const emailTemplate = fs.readFileSync(path.join(__dirname, "./templates/final.hbs"), "utf8");
-// use final.hbs to create the templating function
 const templateFunction = Handlebars.compile(emailTemplate);
 
 // things to change:
@@ -95,6 +98,7 @@ try {
   conn = await mariadb.createConnection(process.env.DB_URL); // top-level await
   console.log("Connected to DB! connection id is " + conn.threadId);
 
+  // Retrieve all orgs joined with their admins
   const sqlString1 = `
     SELECT
       o.name AS orgName,
@@ -109,6 +113,7 @@ try {
     WHERE uoo.isOrgAdmin = 1
     AND o.active = 1;
   `;
+
   const orgs = await conn.execute(sqlString1);
 
   if (orgs.length === 0) {
@@ -126,11 +131,11 @@ try {
   //////////////////////////////////////////////////////////////////////
 
   // Each row in orgs represents a single org and contains one of its admin users.
-  // TODO determine (by testing) what happens if an org has more than 1 admin.
-  // Loop through the orgs in an async-friendly way; i.e., not using forEach.
+  // If an org has more than 1 admin, we'll send identical emails to each of them.
+  // Loop through the orgs/admins in an async-friendly way; i.e., not using forEach.
   // Fetch the agencies that belong to the org. For each agency associated with the org
   // retrieve the results counts (from yesterday) for that agency.
-  // Add the agencies to the org. Process the org, resulting in an email to the org's admin.
+  // Add the agencies to the org. Process the org, resulting in an email to the org's admin(s).
 
   for (let i = 0; i < orgs.length; i++) {
 
@@ -148,10 +153,10 @@ try {
     };
 
     //////////////////////////////////////////////////////////////////////
-    // HAVE a single org, now formatted (w/o agencies) and including admin.
+    // HAVE a single org, now formatted and including admins. But w/o agencies.
     //////////////////////////////////////////////////////////////////////
 
-    // Get all of the org's active agencies.
+    // Get all of the current org's active agencies.
     const sqlString2 = `
       SELECT agencies.id as agencyId, agencies.name as agencyName
       FROM agenciesonorgs
@@ -223,11 +228,20 @@ try {
       const counts = await conn.execute(sqlString5, [...values5]);
       const numResultsValue = counts[0].numResults;
 
+      const emailClickUrlTemplate = process.env.EMAIL_CLICK_URL_TEMPLATE;
+      console.log(org.id)
+      console.log(dbAgency.agencyId)
+      console.log(date)
+      const substStr = `orgId=${org.id}&agencyId=${dbAgency.agencyId}&date=${date}`;
+      console.log(substStr)
+      const url = emailClickUrlTemplate.replace("<append params>", substStr);
+      console.log(url)
+
       org.orgAgencies.push({
         agencyName: dbAgency.agencyName,
         numResults: numResultsValue,
         agencyId: dbAgency.agencyId,
-        url: `https://callauditors.com/agency/${dbAgency.agencyId}`
+        url: url // ilClickUrl(org.id, dbAgency.agencyId, date)
       });
     }
 
