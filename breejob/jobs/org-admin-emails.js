@@ -1,4 +1,4 @@
-import { format, formatISO, interval, lastDayOfDecade, subDays } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import path from 'node:path';
 import fs from 'node:fs';
 import { sgMail } from '../getSgMail.cjs';
@@ -91,6 +91,7 @@ const first = (fullName) => {
 const last = (fullName) => {
   return fullName.split(' ')[1];
 }
+const yesterday = subDays(new Date(), 1);
 
 try {
 
@@ -139,6 +140,7 @@ try {
 
   for (let i = 0; i < orgs.length; i++) {
 
+    console.log(`===============================================`)
     const dbOrg = orgs[i];
 
     const org = {
@@ -217,7 +219,7 @@ try {
       const modelIdValue = modelId[0].modelId;
 
       // HAVE org, agency, and modelId.
-      // FETCH number of results for this model.
+      // FETCH number of results for this model yesterday.
         const sqlString5 = `
             select count(*) as numResults from results
                   where modelId = ?
@@ -229,19 +231,19 @@ try {
       const numResultsValue = counts[0].numResults;
 
       const emailClickUrlTemplate = process.env.EMAIL_CLICK_URL_TEMPLATE;
-      console.log(org.id)
-      console.log(dbAgency.agencyId)
-      console.log(date)
-      const substStr = `orgId=${org.id}&agencyId=${dbAgency.agencyId}&date=${date}`;
-      console.log(substStr)
+      console.log(`orgId: ${org.orgId}`)
+      console.log(`agencyId: ${dbAgency.agencyId}`)
+      console.log(`yesterday: ${yesterday}`)
+      const substStr = `orgId=${org.orgId}&agencyId=${dbAgency.agencyId}&date=${yesterday}`;
+      console.log(`substStr: ${substStr}`)
       const url = emailClickUrlTemplate.replace("<append params>", substStr);
-      console.log(url)
+      console.log(`url: ${url}`)
 
       org.orgAgencies.push({
         agencyName: dbAgency.agencyName,
         numResults: numResultsValue,
         agencyId: dbAgency.agencyId,
-        url: url // ilClickUrl(org.id, dbAgency.agencyId, date)
+        url: url // ilClickUrl(org.id, dbAgency.agencyId, yesterday)
       });
     }
 
@@ -268,13 +270,15 @@ try {
       .finally(() => {
         // If we just processed the last item in orgs, send message to parent process and exit.
         if (i === orgs.length - 1) {
+          if (conn) conn.close();
           if (parentPort) parentPort.postMessage('done');
           else process.exit(0);
         }
       })
   }
 } catch (err) {
-  console.log("SQL error in establishing a connection: ", err);
+  console.log("SQL error: ", err);
 } finally {
   if (conn) conn.close();
+  console.log(`=================================================`)
 }
