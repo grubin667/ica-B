@@ -91,7 +91,7 @@ const first = (fullName) => {
 const last = (fullName) => {
   return fullName.split(' ')[1];
 }
-const yesterday = subDays(new Date(), 1);
+const yesterday = format(subDays(new Date(), 1), 'MM/dd/yyyy');
 
 try {
 
@@ -231,19 +231,20 @@ try {
       const numResultsValue = counts[0].numResults;
 
       const emailClickUrlTemplate = process.env.EMAIL_CLICK_URL_TEMPLATE;
-      console.log(`orgId: ${org.orgId}`)
-      console.log(`agencyId: ${dbAgency.agencyId}`)
+      console.log(`org: ${org.orgId} ${org.orgName}`)
+      console.log(`agencyId: ${dbAgency.agencyId} ${dbAgency.agencyName}`)
       console.log(`yesterday: ${yesterday}`)
       const substStr = `orgId=${org.orgId}&agencyId=${dbAgency.agencyId}&date=${yesterday}`;
-      console.log(`substStr: ${substStr}`)
+      // console.log(`substStr: ${substStr}`)
       const url = emailClickUrlTemplate.replace("<append params>", substStr);
       console.log(`url: ${url}`)
+      console.log(process.env.NODE_ENV === 'development' ? 'jerry@callauditors.com' : org.admin.email)
 
       org.orgAgencies.push({
         agencyName: dbAgency.agencyName,
         numResults: numResultsValue,
         agencyId: dbAgency.agencyId,
-        url: url // ilClickUrl(org.id, dbAgency.agencyId, yesterday)
+        url: url
       });
     }
 
@@ -254,7 +255,7 @@ try {
     const msg = {
       to: process.env.NODE_ENV === 'development' ? 'jerry@callauditors.com' : org.admin.email,
       from: "info@callauditors.com",
-      subject: 'Your results for the past 24 hours',
+      subject: `Your ICA results for ${yesterday}`,
       text: 'Hello',
       html: messageBody
     }

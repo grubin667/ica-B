@@ -20,11 +20,11 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${inter.variable} flex h-screen flex-col`}>
-				{/* <Header /> */}
+				<Header />
 				<main className="flex-1">
 					<Container>{children}</Container>
 				</main>
-				{/* <Footer /> */}
+				<Footer />
 			</body>
 		</html>
 	);

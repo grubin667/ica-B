@@ -9,6 +9,7 @@ const initialize = () => {
   const orgId = searchParams.get('orgId')
   const agencyId = searchParams.get('agencyId')
   const date = searchParams.get('date')
+	console.log(`${orgId} ${agencyId} ${date}`)
   return {orgId, agencyId, date}
 }
 
