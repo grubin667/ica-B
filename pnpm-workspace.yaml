@@ -2,7 +2,7 @@ packages:
   # include packages in subfolders (change as required)
   - 'app/**'
   - 'breejob/**'
-  - 'emailer/**'
+  - 'emailserver/**'
   - 'filewatcherlocal/**'
   # exclude packages that are inside test directories
   - '!**/test/**'

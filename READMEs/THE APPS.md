@@ -1,7 +1,7 @@
 ## *Overview*
 There are four apps running on ICA's AWS server:
 1. the main web server
-1. emailer
+1. emailserver
 1. breejob
 1. filewatcherlocal
 
@@ -33,10 +33,10 @@ Result processing consists of these steps:
 - may need a better way to test in dev
 - may need better error handling.
 
-## *Emailer* app
-*emailer* is a **Nextjs web server**. It listens on port 3050. Its purpose is to wait for an admin user to click the hyperlink embedded in the email sent by *breejob* to all org admins just after midnight (Eastern time) every night. The email contains an array of the admin's org's agencies, one per table row. Each entry identifies the agency and displays the number of recorded calls that that agency processed (sent in) during the preceding 24 hours. Each row also has a clickable hyperlink. Clicking it opens a browser and navigates to the *emailer* web server, passing in org id, agency id and the date to fetch and display. Although all hyperlinks apply to a single specific date, we are prepared to handle older saved emails as well as the current ones.
+## *emailserver* app
+*emailserver* is a **Nextjs web server**. It listens on port 3050. Its purpose is to wait for an admin user to click the hyperlink embedded in the email sent by *breejob* to all org admins just after midnight (Eastern time) every night. The email contains an array of the admin's org's agencies, one per table row. Each entry identifies the agency and displays the number of recorded calls that that agency processed (sent in) during the preceding 24 hours. Each row also has a clickable hyperlink. Clicking it opens a browser and navigates to the *emailserver* web server, passing in org id, agency id and the date to fetch and display. Although all hyperlinks apply to a single specific date, we are prepared to handle older saved emails as well as the current ones.
 
-*emailer* is launched with 3 URL parameters: *orgId*, *agencyId* and *date*.
+*emailserver* is launched with 3 URL parameters: *orgId*, *agencyId* and *date*.
 
 **TBD**:
 - a lot needs to be done

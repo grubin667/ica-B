@@ -20,8 +20,8 @@ module.exports = {
       },
     },
     {
-      name: 'emailer',
-      cwd: '/home/ubuntu/dev/ica-B/emailer',
+      name: 'emailserver',
+      cwd: '/home/ubuntu/dev/ica-B/emailserver',
       script: 'npm',
       args: 'run prod',
       instances: 1,
