@@ -19,7 +19,7 @@ const initialize = () => {
   const agencyId = searchParams.get('agencyId')
   const date = searchParams.get('date')
   console.log(`${orgId} ${agencyId} ${date}`)
-  return { orgId, agencyId, date }
+  return { orgId: orgId || 'abc', agencyId: agencyId || 'def', date: date || '1/2/1997' }
 }
 
 const Home = () => {
@@ -35,17 +35,14 @@ const Home = () => {
   const gridRef = useRef();
 
   const searchParams = initialize()
+
   const pString = `${searchParams.orgId} ${searchParams.agencyId} ${searchParams.date}`
   console.log(pString)
 
-  const {
-    data: allResultsForOrg,
-    error: allResultsForOrgError,
-    isLoading: allResultsForOrgIsLoading,
-  } = useSWR(`/api/results?orgId=${searchParams.orgId}`);
-  if (!data) {
-    return { isLoading: true }
-  }
+  const { data, error, isLoading } = useSWR(`/api/results?orgId=${searchParams.orgId}`);
+   
+  if (error) return <div>failed to load</div>
+  if (isLoading) return <div>loading...</div>
 
   const [columnDefs, setColumnDefs] = useState([
     { field: "date", cellRenderer: "agGroupCellRenderer" },
