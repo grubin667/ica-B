@@ -1,9 +1,13 @@
 import { prisma } from "../../../lib/prisma";
 import { NextResponse } from "next/server";
 
-// Endpoint serve GET (one row by id).
+// This is the "slug-route" handler for the results table (/app/api/results/[id]/route.ts).
+// There is also a "catch-route" handler (/app/api/results/route.ts).
+// (See READMEs/routes.md for definitions.)
+//
 
-// This is for results.
+// This GET endpoint is called with a slug id holding desired resultId.
+// It returns 1 row.
 
 export async function GET(
   request: Request,

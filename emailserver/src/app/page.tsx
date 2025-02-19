@@ -14,15 +14,27 @@ import DetailCellRenderer from "../fromapp/detailCellRenderer";
 const initialize = () => {
 
   const searchParams = useSearchParams()
-
   const orgId = searchParams.get('orgId')
-  const agencyId = searchParams.get('agencyId')
+  const orgName = searchParams.get('orgName')
+  const agencyId = searchParams.get('agencyId') // a single agencyId
+  const agencyName = searchParams.get('agencyName')
   const date = searchParams.get('date')
-  console.log(`${orgId} ${agencyId} ${date}`)
-  return { orgId: orgId || 'abc', agencyId: agencyId || 'def', date: date || '1/2/1997' }
+  return { orgId, orgName, agencyId, agencyName, date }
 }
 
+// At midnight every night breejob sends emails to each admin user of each active org.
+// The emails display a table of the org's agencies. Each row displays the agency name along with
+// the number of call recordings processed by the agency on behalf of the org during that day's.
+// Each table row also contains a clickable hyperlink to open emailserver's web site, passing in
+// these search parameters: orgId, agencyId and date.
+// One click opens this site with a grid of all calls processed on date that were uploaded by
+// the row's agency on behalf of the email receiver's org.
 const Home = () => {
+
+  const searchParams = initialize()
+  if (!searchParams.orgId) {
+    return <>No params</>
+  }
 
   const lk = process.env.NEXT_PUBLIC_AGGRID_LICENSE_KEY;
   LicenseManager.setLicenseKey(lk || '');
@@ -31,18 +43,20 @@ const Home = () => {
   const gridStyle = useMemo(() => ({ width: "100%", height: 610 }), []);
   const detailCellRenderer = useCallback(DetailCellRenderer, []);
   const [rowData, setRowData] = useState([]);
-  let gridApiRef = useRef(null);
+  const initialRef: any = null;
+  let gridApiRef = useRef(initialRef);
   const gridRef = useRef();
 
-  const searchParams = initialize()
-
-  const pString = `${searchParams.orgId} ${searchParams.agencyId} ${searchParams.date}`
-  console.log(pString)
-
-  const { data, error, isLoading } = useSWR(`/api/results?orgId=${searchParams.orgId}`);
-   
+  // Call API to retrieve ALL results for org (orgId) by agency (agencyId) on date.
+  // (If we add more calls to useSWR, give data, error and isLoading aliases, e.g., data: allResultsForOrg, ....)
+  const { data, error, isLoading } = useSWR(
+    `/api/results?orgId=${searchParams.orgId}&date=${searchParams.date}&agencyIds=${searchParams.agencyId}`
+  );
   if (error) return <div>failed to load</div>
   if (isLoading) return <div>loading...</div>
+
+  // data has the pertinent results for the date requested
+  setRowData(data);
 
   const [columnDefs, setColumnDefs] = useState([
     { field: "date", cellRenderer: "agGroupCellRenderer" },
@@ -98,8 +112,9 @@ const Home = () => {
   }, []);
 
   const onRowGroupOpened = (params: { node: { expanded: any; id: any; uiLevel: any; }; api: null; }) => {
+
     // It's possible, sometime in the future, that we'll want to ensure the just-expanded node
-    // and it's child are fully visible on the screen.
+    // and it's child are scrolled into position to be fully visible on the screen.
     // See https://www.ag-grid.com/javascript-grid-tree-data/#expand-collapse-groups-via-api.
     if (params.node.expanded) {
       if (!gridApiRef.current) {
@@ -119,25 +134,14 @@ const Home = () => {
 
   return (
     <>
-      <section className="mt-48 flex flex-col items-center justify-center">
-        <h1 className="text-6xl font-bold">Welcome to NextJS Starter Jerry2</h1>
-        <p>We will be processing {pString}</p>
+      <section className="mt-2 flex flex-col items-center justify-center">
+        <h1 className="text-6xl font-bold mb-2">Jerry&apos;s Next Big Thing</h1>
+        <p>Results from {searchParams.date} from Agency {searchParams.agencyName} for Org {searchParams.orgName} </p>
       </section>
 
       <section>
-        <div className="overflow-y-auto h-full">
+        <div className="overflow-y-auto h-full mt-1">
           <>
-            {/* <div className="flex flex-row justify-between">
-                      <span className="ml-4 font-bold">
-                        {numResultsFilteredOutRef.current > 0
-                          ? `Viewing: ${allResultsForOrg.rslts.length -
-                          numResultsFilteredOutRef.current
-                          } transaction(s); not showing due to filtering: ${numResultsFilteredOutRef.current
-                          }`
-                          : `Viewing: ${allResultsForOrg.rslts.length} transaction(s); not showing due to filtering: 0`
-                        }
-                      </span>
-                    </div> */}
             <div style={containerStyle}>
               <div style={gridStyle} className={"ag-theme-quartz"}>
                 <AgGridReact

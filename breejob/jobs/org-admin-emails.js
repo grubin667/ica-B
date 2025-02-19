@@ -234,8 +234,8 @@ try {
       console.log(`org: ${org.orgId} ${org.orgName}`)
       console.log(`agencyId: ${dbAgency.agencyId} ${dbAgency.agencyName}`)
       console.log(`yesterday: ${yesterday}`)
-      const substStr = `orgId=${org.orgId}&agencyId=${dbAgency.agencyId}&date=${yesterday}`;
-      // console.log(`substStr: ${substStr}`)
+      const substStr = `orgId=${org.orgId}&orgName=${org.orgName}&agencyId=${dbAgency.agencyId}&agencyName=${dbAgency.agencyName}&date=${yesterday}`;
+      console.log(`substStr: ${substStr}`)
       const url = emailClickUrlTemplate.replace("<append params>", substStr);
       console.log(`url: ${url}`)
       console.log(process.env.NODE_ENV === 'development' ? 'jerry@callauditors.com' : org.admin.email)

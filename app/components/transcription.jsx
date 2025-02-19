@@ -8,7 +8,6 @@ export default function Transcription(props) {
 
   const id = props.resultsId;
   const { data: thisResult, error, isLoading } = useSWR(`/api/results/${id}`)
-
   if (error) return (<div>Error loading data</div>);
   if (isLoading) return (<div>loading...</div>);
 

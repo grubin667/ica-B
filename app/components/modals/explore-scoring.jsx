@@ -136,7 +136,8 @@ export default function ExploreScoringModal(props) {
 
   const onRowGroupOpened = (params) => {
     // It's possible, sometime in the future, that we'll want to ensure the just-expanded node
-    // and it's child are fully visible. See https://www.ag-grid.com/javascript-grid-tree-data/#expand-collapse-groups-via-api.
+    // and it's child are fully visible in the browser.
+    // See https://www.ag-grid.com/javascript-grid-tree-data/#expand-collapse-groups-via-api.
     if (params.node.expanded) {
       if (!gridApiRef.current) {
         gridApiRef.current = params.api;
@@ -154,11 +155,13 @@ export default function ExploreScoringModal(props) {
   /////////////////////////////////////////////////////////////////////
   // init methods that need to be declared before their use
   /////////////////////////////////////////////////////////////////////
+
   const {
     data: allResultsForOrg,
     error: allResultsForOrgError,
     isLoading: allResultsForOrgIsLoading,
   } = useSWR(role.orgId.length > 0 ? `/api/results?orgId=${role.orgId}` : []);
+  
   const {
     data: agenciesInOrg,
     error: agenciesInOrgError,

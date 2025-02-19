@@ -114,7 +114,7 @@ export default function AddAgencyModal(props) {
     role.orgId.length > 0 &&
       props.openModal?.idId === "aid" &&
       props.openModal?.idVal.length > 0
-      ? `/api/results?orgId=${role.orgId}&agencyId=${props.openModal.idVal}`
+      ? `/api/results?orgId=${role.orgId}&agencyIds=${props.openModal.idVal}`
       : []
   );
 
