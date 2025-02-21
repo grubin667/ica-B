@@ -17,6 +17,7 @@ import { NextRequest, NextResponse } from "next/server";
 //    b) app/components/modals/add-agency.jsx        orgId, agencyIds
 //        Returns all results uploaded by ??? on 
 //        behalf of org orgId for all dates.
+//        WHY DOES THIS CARE ABOUT results???????????????????????
 //    c) app/components/modals/explore-scoring.jsx   orgId (date and agency filtering are done back in explore-scoring)
 //        Returns all results for org orgId uploaded 
 //        by any agencies for all dates.
@@ -63,17 +64,18 @@ export async function GET(request: NextRequest) {
       //            the table with model [default]; note: these rows don't actually have to be in the
       //            table; they could be added manually;
 
-      rslts = await prisma.result.findMany({
-        where: {
-          modelId: { in: xxx }
-        },
-        include: {
-          model: true,
-        },
-        orderBy: {
-          transcriptionDatetime: 'desc'
-        }
-      })
+      // rslts = await prisma.result.findMany({
+      //   where: {
+      //     modelId: { in: xxx }
+      //   },
+      //   include: {
+      //     model: true,
+      //   },
+      //   orderBy: {
+      //     transcriptionDatetime: 'desc'
+      //   }
+      // })
+      rslts = await prisma.result.findMany()
 
       // the following is what needs to be incorporated into the findMany above.
       expandedRslts = []

@@ -1,5 +1,4 @@
-import exp from "constants";
-// import { prisma } from "../../lib/prisma";
+import { prisma } from "../../../../../app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 // Endpoint serves only get with 1 or 2 searchParams: orgId (req.) and agencyIds (opt.).
@@ -21,10 +20,10 @@ export async function GET(request: NextRequest) {
     // if (!agencyIds) {
     // get all results for org orgId across all of its agencies
 
-    // modelIdArray = await prisma.modelsOnAgenciesOnOrgs.findMany({
-    //   where: { orgId: orgId },
-    //   select: { modelId: true }
-    // })
+    modelIdArray = await prisma.modelsOnAgenciesOnOrgs.findMany({
+      where: { orgId: orgId },
+      select: { modelId: true }
+    })
 
     // TODO need to modify so that each item in the rslts array is augmented with 
     // agency.id and agency.name. but I don't quite know how so I'm doing it below.
