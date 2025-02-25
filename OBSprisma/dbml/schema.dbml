@@ -1,0 +1,197 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table agencies {
+  id String [pk]
+  name String [unique]
+  city String
+  state String
+  active Boolean [not null, default: true]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  orgs agenciesonorgs [not null]
+  users usersonagencies [not null]
+  ModelsOnAgenciesOnOrgs modelsonagenciesonorgs [not null]
+}
+
+Table markdowns {
+  id String [pk]
+  shortName String [not null]
+  name String [not null]
+  order Int [not null, default: 100]
+  md String [not null]
+  html String
+}
+
+Table models {
+  id String [pk]
+  name String [not null]
+  description String
+  params String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  AgenciesOnOrgs agenciesonorgs [not null]
+  ModelsOnAgenciesOnOrgs modelsonagenciesonorgs [not null]
+  Result results [not null]
+}
+
+Table orgs {
+  id String [pk]
+  name String [unique]
+  contact String
+  contactPhone String
+  contactEmail String
+  active Boolean [not null, default: true]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  users usersonorgs [not null]
+  agencies agenciesonorgs [not null]
+  ModelsOnAgenciesOnOrgs modelsonagenciesonorgs [not null]
+}
+
+Table results {
+  id String [pk]
+  bucketName String [not null]
+  agencyName String [not null]
+  orgName String [not null]
+  objectName String [not null]
+  restatus Restatus [not null, default: 'NEW']
+  transcription String
+  transcriptionDatetime String
+  letterGrade String
+  otherScoreInfo String
+  modelId String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  model models
+}
+
+Table users {
+  id String [pk]
+  name String
+  email String [unique]
+  emailVerified DateTime
+  phone String
+  image String
+  superAdmin Boolean [not null, default: false]
+  active Boolean [not null, default: true]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  accounts accounts [not null]
+  sessions sessions [not null]
+  agencies usersonagencies [not null]
+  orgs usersonorgs [not null]
+}
+
+Table agenciesonorgs {
+  id String [pk]
+  orgId String [not null]
+  agencyId String [not null]
+  activeModelId String [not null]
+  isInternalAgency Boolean [not null, default: false]
+  encryptionStuff String [not null, default: '']
+  org orgs [not null]
+  agency agencies [not null]
+  model models [not null]
+}
+
+Table modelsonagenciesonorgs {
+  id String [pk]
+  modelId String [not null]
+  orgId String [not null]
+  agencyId String [not null]
+  activeFrom DateTime [default: `now()`, not null]
+  activeThru DateTime
+  model models [not null]
+  org orgs [not null]
+  agency agencies [not null]
+}
+
+Table usersonagencies {
+  id String [pk]
+  agencyId String [not null]
+  userId String [not null]
+  isAgencyAdmin Boolean [not null, default: false]
+  agency agencies [not null]
+  user users [not null]
+}
+
+Table usersonorgs {
+  id String [pk]
+  orgId String [not null]
+  userId String [not null]
+  isOrgAdmin Boolean [not null, default: false]
+  org orgs [not null]
+  user users [not null]
+}
+
+Table accounts {
+  id String [pk]
+  userId String [not null]
+  type String [not null]
+  provider String [not null]
+  providerAccountId String [not null]
+  refresh_token String
+  access_token String
+  expires_at Int
+  token_type String
+  scope String
+  id_token String
+  session_state String
+  user users [not null]
+
+  indexes {
+    (provider, providerAccountId) [unique]
+  }
+}
+
+Table sessions {
+  id String [pk]
+  sessionToken String [unique, not null]
+  userId String [not null]
+  expires DateTime [not null]
+  user users [not null]
+}
+
+Table verificationtokens {
+  identifier String [not null]
+  token String [unique, not null]
+  expires DateTime [not null]
+
+  indexes {
+    (identifier, token) [unique]
+  }
+}
+
+Enum Restatus {
+  NEW
+  SCORED
+  REJECTED
+}
+
+Ref: results.modelId > models.id
+
+Ref: agenciesonorgs.orgId > orgs.id
+
+Ref: agenciesonorgs.agencyId > agencies.id
+
+Ref: agenciesonorgs.activeModelId > models.id
+
+Ref: modelsonagenciesonorgs.modelId > models.id
+
+Ref: modelsonagenciesonorgs.orgId > orgs.id
+
+Ref: modelsonagenciesonorgs.agencyId > agencies.id
+
+Ref: usersonagencies.agencyId > agencies.id
+
+Ref: usersonagencies.userId > users.id
+
+Ref: usersonorgs.orgId > orgs.id
+
+Ref: usersonorgs.userId > users.id
+
+Ref: accounts.userId > users.id [delete: Cascade]
+
+Ref: sessions.userId > users.id [delete: Cascade]

@@ -1,0 +1,291 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+// Naming conventions
+//   Model names must adhere to the following regular expression: [A-Za-z][A-Za-z0-9_]*
+//   Model names must start with a letter and are typically spelled in PascalCase
+//   Model names should use the singular form (for example, User instead of user, users or Users)
+//   Each singularly-named non-junction table (e.g., User) is @@mapped to the lowercase, plural of its name (e.g., users).
+//   Junction tables do not follow the aforementioned naming convention; e.g., the many-to-many explicit junction table between User and Org is named UsersToOrgs.
+//   If there is a 3rd joined table, the junction table is named like ModelsOnAgenciesForOrgs.
+
+// Relations
+//   Prisma supports these types of relationships between data tables (models in Prisma-speak):
+//     1) one-to-one
+//     2) one-to-many
+//     3) many-to-many
+//     4) self
+//
+//   Take the following 2-model schema where a user can compose any number of posts (even 0).
+//     This is manifested by a one-to-many relation between the User and Post tables:
+//
+//     model User {
+//       id    Int    @id @default(autoincrement()) // the User table primary key
+//       posts Post[]
+//     }
+//     model Post {
+//       id       Int  @id @default(autoincrement())
+//       author   User @relation(fields: [authorId], references: [id])
+//       authorId Int // relation scalar field  (used in the `@relation` attribute above) the foreign key
+//     }
+//     In the Prisma schema, the foreign key / primary key relationship is represented by the @relation attribute on the author field:
+//        author     User        @relation(fields: [authorId], references: [id])
+//
+//     At a Prisma level, the User / Post relation is made up of:
+//       - Two relation fields: author and posts. Relation fields define connections between models at the Prisma level and do not exist in the database. These fields are used to generate Prisma Client.
+//       - The scalar authorId field, which is referenced by the @relation attribute. This field does exist in the database - it is the foreign key that connects Post and User.
+//     At a Prisma level, a connection between two models is always represented by a relation field on each side of the relation.
+//
+//   The posts field in User is included so that queries returning users will come back with each user object containing an array
+//     of connected posts. It is optional if easy retrieval of users' posts isn't required.
+//   The author field in Post is required since it carries the specific of the @relation.
+//
+//   For additional clarification see Prisma documentation at https://www.prisma.io/docs/concepts/components/prisma-schema/relations.
+
+//   There can be 3 types of relations (and each can be normal or self-referencing):
+//     1) One-to-one
+//     2) One-to-many
+//     3) Many-to-many
+//   A relation field, by definition, has a type that refers to another model, not a scalar; e.g., author   User  or  posts   Post[].
+//   The @relation attribute can be applied only to relation fields, not to scalar fields. But confusingly, not all relation fields have
+//     or require a @relation attribute. Also, we sometimes include a field in one table that represents a single or an array of instances of
+//     a related model (or none), even though this field doesn't really exist in the actual database; e.g., see fields orgs and users in the Agency model.
+//     An explanation of both of these concepts (we call the second phenomenon p-fields, for Prisma or phantom) follows this list.
+//   The @relation attribute usually looks like the following example:
+//     model Xyz {
+//         ...
+//       author   User   @relation(fields: [authorId], references: [id])
+//         ...
+//     }
+//     Notes:
+//       a) the author field is only in the schema, not in the actual database;
+//       b) there is a scalar in this same model (table) called authorId (fk) that references the id field in User;
+//       c) the @relation attribute is used on the side (model or table) that will store the foreign key in the underlying database;
+//       d) the @relation attribute is required on one side of the relation when defining a 1-to-1 or 1-to-many relation;
+//       e) a many-to-many relation is effectively 2 1-to-many relations and thus requires @relation attributes on each side;
+//       f) an explicit many-to-many relation requires a junction table
+//   In this app we always implement many-to-many (n-to-m) relationships using junction tables, resulting in explicit relationship declarations. This is
+//     because we typically add relationship-enhancement properties, e.g., isInternalAgency in AgenciesOnOrgs or isAgencyAdmin in UsersOnAgencies.
+//     Prisma does support implicit relationship declarations, where a junction table isn't explicitly in the schema (although Prisna creates one
+//     in the DB and manages it for you), but we cannot use implicit relationships because we always include additional properties (in this app).
+
+// @relation attributes and p-fields
+//
+
+// The following models have been added by and are used exclusively by next-auth:
+//  Account
+//  Session
+//  VerificationToken
+// The User model was added by next-auth, but I've added several properties; so it's shared.
+//  User              shared with ICA
+// The rest of the models are used only by ICA.
+
+// NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations below.
+// See https://next-auth.js.org/schemas/models.
+
+// "non-JOIN" tables - all used exclusively by ICA code
+
+model Agency {
+    id                     String                   @id @default(cuid())
+    name                   String?                  @unique
+    city                   String?
+    state                  String?
+    active                 Boolean                  @default(true)
+    createdAt              DateTime                 @default(now())
+    updatedAt              DateTime                 @updatedAt
+    orgs                   AgenciesOnOrgs[]
+    users                  UsersOnAgencies[]
+    ModelsOnAgenciesOnOrgs ModelsOnAgenciesOnOrgs[]
+
+    @@map("agencies")
+}
+
+model Markdown {
+    id                     String                   @id @default(cuid())
+    shortName              String
+    name                   String
+    order                  Int                      @default(100)
+    md                     String                   @db.Text
+    html                   String?                  @db.Text
+
+    @@map("markdowns")
+}
+
+model Model {
+    id                     String                   @id @default(cuid())
+    name                   String
+    description            String?
+    params                 String                   @db.Text
+    createdAt              DateTime                 @default(now())
+    updatedAt              DateTime                 @updatedAt
+    AgenciesOnOrgs         AgenciesOnOrgs[]
+    ModelsOnAgenciesOnOrgs ModelsOnAgenciesOnOrgs[]
+    Result                 Result[]
+
+    @@map("models")
+}
+
+model Org {
+    id                     String                   @id @default(cuid())
+    name                   String?                  @unique
+    contact                String?
+    contactPhone           String?
+    contactEmail           String?
+    active                 Boolean                  @default(true)
+    createdAt              DateTime                 @default(now())
+    updatedAt              DateTime                 @updatedAt
+    users                  UsersOnOrgs[]
+    agencies               AgenciesOnOrgs[]
+    ModelsOnAgenciesOnOrgs ModelsOnAgenciesOnOrgs[]
+
+    @@map("orgs")
+}
+
+enum Restatus {
+    NEW
+    SCORED
+    REJECTED
+}
+
+model Result {
+    id                    String    @id @default(cuid())
+    bucketName            String
+    agencyName            String
+    orgName               String
+    objectName            String
+    restatus              Restatus  @default(NEW)
+    transcription         String?   @db.LongText
+    transcriptionDatetime String?
+    letterGrade           String?
+    otherScoreInfo        String?   @db.LongText // JSON.stringify({ norm, normCombined, scoredWords }) quite long
+    modelId               String?
+    createdAt             DateTime  @default(now())
+    updatedAt             DateTime  @updatedAt
+    model                 Model?    @relation(fields: [modelId], references: [id])
+
+    @@map("results")
+}
+
+// The User model was added by next-auth, but I've added several properties; it's now "shared".
+
+model User {
+    id            String            @id @default(cuid())
+    name          String?
+    email         String?           @unique
+    emailVerified DateTime?
+    phone         String?
+    image         String?
+    superAdmin    Boolean           @default(false)
+    active        Boolean           @default(true)
+    createdAt     DateTime          @default(now())
+    updatedAt     DateTime          @updatedAt
+    accounts      Account[]
+    sessions      Session[]
+    agencies      UsersOnAgencies[]
+    orgs          UsersOnOrgs[]
+
+    @@map("users")
+}
+
+// "JOIN" tables - all used exclusively by our code
+
+model AgenciesOnOrgs {
+    id               String  @id @default(cuid())                                   // NEW FIELD
+    orgId            String
+    agencyId         String
+                                                                                    // DELETED shareLink
+    activeModelId    String                                                         // NEW FIELD
+    isInternalAgency Boolean @default(false)
+    encryptionStuff  String  @default("")                                           // NEW FIELD
+    org              Org     @relation(fields: [orgId], references: [id])
+    agency           Agency  @relation(fields: [agencyId], references: [id])
+    model            Model   @relation(fields: [activeModelId], references: [id])   // NEW RELATIONSHIP
+
+    @@map("agenciesonorgs")
+}
+
+model ModelsOnAgenciesOnOrgs {
+    id         String    @id @default(cuid())                                       // NEW FIELD
+    modelId    String
+    orgId      String
+    agencyId   String
+    activeFrom DateTime  @default(now())
+    activeThru DateTime?
+    model      Model     @relation(fields: [modelId], references: [id])
+    org        Org       @relation(fields: [orgId], references: [id])
+    agency     Agency    @relation(fields: [agencyId], references: [id])
+
+    @@map("modelsonagenciesonorgs")
+}
+
+model UsersOnAgencies {
+    id              String  @id @default(cuid())                                    // NEW FIELD
+    agencyId        String
+    userId          String
+    isAgencyAdmin   Boolean @default(false)
+    agency          Agency  @relation(fields: [agencyId], references: [id])
+    user            User    @relation(fields: [userId], references: [id])
+
+    @@map("usersonagencies")
+}
+
+model UsersOnOrgs {
+    id           String  @id @default(cuid())                                       // NEW FIELD
+    orgId        String
+    userId       String
+    isOrgAdmin   Boolean @default(false)
+    org          Org     @relation(fields: [orgId], references: [id])
+    user         User    @relation(fields: [userId], references: [id])
+
+    @@map("usersonorgs")
+}
+
+// "next-auth" tables - all used exclusively by next-auth
+
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+    @@map("accounts")
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("sessions")
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+    @@map("verificationtokens")
+}

@@ -7,6 +7,10 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 // Naming conventions
 //   Model names must adhere to the following regular expression: [A-Za-z][A-Za-z0-9_]*
 //   Model names must start with a letter and are typically spelled in PascalCase
