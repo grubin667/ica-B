@@ -15,6 +15,7 @@
     "noImplicitAny": false,
     "paths": {
       "react": [ "node_modules/@types/react" ],
+      "@prisma/client": ["../../packages/db/node_modules/.prisma/client"],
     },
     "plugins": [
       {
